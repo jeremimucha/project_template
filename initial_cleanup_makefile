@@ -1,2 +1,2 @@
 clean:
-	rm -f bin/*.* incl/*.* obj/*.* src/*.* tests/*.* ./initial_cleanup_makefile
+	rm -f bin/*.* incl/*.* obj/*.* src/*.* tests/*.* build/*.* ./initial_cleanup_makefile
