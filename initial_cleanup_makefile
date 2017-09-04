@@ -1,1 +1,2 @@
-rm -f bin/*.* incl/*.* obj/*.* src/*.* tests/*.* initial_cleanup_makefile
+clean:
+	rm -f bin/*.* incl/*.* obj/*.* src/*.* tests/*.* ./initial_cleanup_makefile
