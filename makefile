@@ -1,43 +1,47 @@
 CXX = g++
 
-IBOOST_DIR=C:/boost/boost_1_64_0		# boost Library include directory
-ICPPLIBS=C:/_cpplibs/include			# Other libraries include dir
+IBOOST_DIR=C:/boost/boost_1_64_0
+ICPPLIBS=C:/_cpplibs/include
 
-LDIR=C:/boost/lib_64gcc/lib				# boost Library lib files
-LIBS=									# other libraries lib files
-IDIR=incl								# include directory (for this project)
+LDIR=C:/boost/lib_64gcc/lib
+LIBS=
+IDIR=incl
 
 CFLAGS=-O2 -Wall -Wextra -pedantic -std=c++14 -I$(IBOOST_DIR) -I$(ICPPLIBS) \
 -I$(IDIR) -L$(LDIR) $(LIBS) -static
 
 
-_DEPS = # Insert header file names here, place them in IDIR (./incl by default)
+_DEPS = example.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-SDIR=src								# source file directory
-_SRC = # Insert .cpp source file names here, place them in SDIR (./src)
+SDIR=src
+_SRC = main.cpp example.cpp
 SRC = $(patsubst %,$(SDIR)/%,$(_SRC))
 
-ODIR=obj								# object file directory
-_OBJ = # Insert .o files compiled from SRC here, they will be placed in ODIR (./obj)
+ODIR=obj
+_OBJ = main.o example.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-TDIR=bin								# target (executable) directory
-_TARGET = # Insert executable .exe files here, they will be placed in TDIR (./bin)
+TDIR=bin
+_TARGET = main.exe
 TARGET = $(patsubst %,$(TDIR)/%,$(_TARGET)) 
 
 
-TESTS_DIR=tests							# tests source directory
-_TESTS_DEPS = # Insert header file names here, place them in TESTS_DIR (./tests)
+TESTS_DIR=tests
+_TESTS_DEPS = testsheader.hpp 
 TESTS_DEPS = $(patsubst %,$(TESTS_DIR)/%,$(_TESTS_DEPS))
-_TESTSO = # Insert .o test files here, place .cpp test files in TESTS_DIR (./tests)
+_TESTSO = tests_blabla.o tests_main.o
 TESTSO = $(patsubst %,$(TESTS_DIR)/%,$(_TESTSO))
 
-_TESTS = # insert tests main executable name here
+_TESTS = tests_main.exe
 TESTS = $(patsubst %,$(TESTS_DIR)/%,$(_TESTS))
 
+# if you want to compile libraries
+LIBTARGET=build/libmain.lib
+LIBSOTARGET=build/libmain.dll
 
-all: $(TARGET) $(TESTS)
+
+all: $(TARGET) $(TESTS) $(LIBTARGET) $(LIBSOTARGET)
 
 
 # Compile the project
@@ -55,10 +59,19 @@ $(TESTS_DIR)/%.o: $(TESTS_DIR)/%.cpp $(DEPS) $(TESTS_DEPS)
 $(TESTS): $(TESTSO)
 	$(CXX) -o $@ $^ $(CFLAGS)
 
+# makes the target, first the .a file (ar) and then the library via ranlib
+$(LIBTARGET): $(OBJ)
+	ar rcs $@ $(OBJ)
+	ranlib $@
+
+$(LIBSOTARGET): $(LIBTARGET) $(OBJ)
+	$(CXX) -shared -o $@ $(OBJ)
 
 
 clean:
-	rm -f $(ODIR)/*.* $(TDIR)/*.* $(TESTS_DIR)/*.o $(TESTS_DIR)/*.exe
+	rm -f $(ODIR)/*.* $(TDIR)/*.*
+	rm -f $(TESTS_DIR)/*.o $(TESTS_DIR)/*.exe
+	rm -f build/*.lib build/*.dll
 
 
 .PHONY: all, clean
