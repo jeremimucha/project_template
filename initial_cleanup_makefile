@@ -1,0 +1,1 @@
+rm -f bin/*.* incl/*.* obj/*.* src/*.* tests/*.* initial_cleanup_makefile
